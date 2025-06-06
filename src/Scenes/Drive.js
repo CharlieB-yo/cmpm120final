@@ -35,29 +35,6 @@ class Drive extends Phaser.Scene {
             solid: true
         });
 
-        // TODO: Add createFromObjects here
-        // Find coins in the "Objects" layer in Phaser
-        // Look for them by finding objects with the name "coin"
-        // Assign the coin texture from the tilemap_sheet sprite sheet
-        // Phaser docs:
-        // https://newdocs.phaser.io/docs/3.80.0/focus/Phaser.Tilemaps.Tilemap-createFromObjects
-
-        // this.snowmen = this.map.createFromObjects("objects", {
-        //     name: "snowman",
-        //     key: "tilemap_sheet",
-        //     frame: 145
-        // });
-
-
-        // TODO: Add turn into Arcade Physics here
-        // Since createFromObjects returns an array of regular Sprites, we need to convert 
-        // them into Arcade Physics sprites (STATIC_BODY, so they don't move) 
-        // this.physics.world.enable(this.snowmen, Phaser.Physics.Arcade.STATIC_BODY);
-        // this.physics.world.enable(this.flag, Phaser.Physics.Arcade.STATIC_BODY);
-
-        // Create a Phaser group out of the array this.coins
-        // This will be used for collision detection below.
-
         // set up player avatar
         my.sprite.player = this.physics.add.sprite(30, 200, "cars", "car_blue_1.png");
         my.sprite.player.setCollideWorldBounds(true);
@@ -66,25 +43,12 @@ class Drive extends Phaser.Scene {
         // Enable collision handling
         this.physics.add.collider(my.sprite.player, this.roadLayer);
 
-        // TODO: Add coin collision handler
-        // Handle collision detection with coins
-        // this.physics.add.overlap(my.sprite.player, this.snowmanGroup, (obj1, obj2) => {
-        //     this.snowmenCount += 1;
-        //     this.sound.play("collect");
-        //     obj2.destroy(); // remove coin on overlap
-        // });
-
-        // this.physics.add.overlap(my.sprite.player, this.flag, (obj1, obj2) => {
-        //     this.registry.set('snowmenCount', this.snowmenCount);
-        //     this.scene.restart();
-        //     this.scene.start("End");
-        // });
-
         // set up Phaser-provided cursor key input
         cursors = this.input.keyboard.createCursorKeys();
 
         this.rKey = this.input.keyboard.addKey('R');
 
+        //end vfx
         my.vfx.end = this.add.particles(0, 0, "kenny-particles", {
             frame: ['star_04.png', 'star_01.png', 'star_02.png', 'star_03.png'],
             scale: {start: 0.04, end: 0.08},
@@ -96,7 +60,7 @@ class Drive extends Phaser.Scene {
 
         // TODO: add camera code here
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-        this.cameras.main.startFollow(my.sprite.player, true, 0.25, 0.25); // (target, [,roundPixels][,lerpX][,lerpY])
+        this.cameras.main.startFollow(my.sprite.player, true, 0.25, 0.25); 
         this.cameras.main.setDeadzone(0, 0);
         this.cameras.main.setZoom(this.SCALE);
 
@@ -107,9 +71,9 @@ class Drive extends Phaser.Scene {
     }
 
     update() {
-        //console.log(`x: ${my.sprite.player.body.x}   y: ${my.sprite.player.body.y}`);
         if(this.active){
 
+            //timer
             if(this.timing){
                 this.timer += 1;
             }
@@ -117,7 +81,7 @@ class Drive extends Phaser.Scene {
             const body = my.sprite.player.body;
 
             
-
+            //turning
             my.sprite.player.setAngularVelocity(0);
             if(cursors.left.isDown) {
                 my.sprite.player.setAngularVelocity(-250);
@@ -125,6 +89,7 @@ class Drive extends Phaser.Scene {
                 my.sprite.player.setAngularVelocity(250);
             } 
             
+            //driving
             if (cursors.up.isDown) {
                 this.timing = true;
                 // Accelerate forward
@@ -140,13 +105,13 @@ class Drive extends Phaser.Scene {
                 const accelY = Math.sin(angle) * -this.ACCELERATION;
                 body.setAcceleration(accelX, accelY);
             } else {
-                // No input — let drag slow the player down
+                // No input, let drag slow the player down
                 body.setAcceleration(0, 0);
             }
             const currentSpeed = Math.sqrt(my.sprite.player.body.velocity.x * my.sprite.player.body.velocity.x + my.sprite.player.body.velocity.y * my.sprite.player.body.velocity.y);
 
+            //max speed
             if (currentSpeed > 150) {
-                // Normalize and scale to maxSpeed
                 const scale = 150 / currentSpeed;
                 my.sprite.player.body.velocity.x *= scale;
                 my.sprite.player.body.velocity.y *= scale;
@@ -155,19 +120,17 @@ class Drive extends Phaser.Scene {
             if(Phaser.Input.Keyboard.JustDown(this.rKey)) {
                 this.scene.restart();
             }
-
+            //win detection
             if(my.sprite.player.body.y<53 && my.sprite.player.body.x>335){
                 console.log(`you win: ${this.timer}`)
                 this.active = false;
                 this.registry.set("runTime", this.timer);
-                //add vfx
                 this.timer = 0;
                 body.setAcceleration(0, 0);
                 my.vfx.end.start();
             }
         }else{
             my.sprite.player.setAngularVelocity(0);
-            //body.setAcceleration(0, 0);
             this.timer += 1;
             my.vfx.end.stop();
             if(this.timer > 120){

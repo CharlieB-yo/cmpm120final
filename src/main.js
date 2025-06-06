@@ -32,7 +32,7 @@ let config = {
     },
     width: 1440,
     height: 900,
-    scene: [Load, Drive, End]
+    scene: [Load, Drive, End, Credits]
 }
 
 var cursors;

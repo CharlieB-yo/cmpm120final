@@ -9,17 +9,9 @@ class End extends Phaser.Scene {
     }
 
     create() {
-        // cursors = this.input.keyboard.createCursorKeys();
 
         this.rKey = this.input.keyboard.addKey('R');
         this.runTime = this.registry.get('runTime');
-        // const scoreText = this.add.text(500, 250, `YOUR SCORE: ${this.score}`, {
-        //     fontFamily: 'Roboto',
-        //     fontSize: '32px',
-        //     align: 'center',
-        //     color: '#ffffff'
-        // });
-        // scoreText.setOrigin(0.5, 0.5);
 
         if(this.registry.get('highScore') == undefined || this.registry.get('highScore') > this.runTime){
             console.log("new high score");
@@ -50,24 +42,7 @@ class End extends Phaser.Scene {
                     .on('pointerdown', () => this.scene.start("driveScene"));
                 replayButton.setOrigin(0.5, 0.5);
             }
-        });
-//         this.add.text(500, 250, `YOUR SCORE: ${this.score}`, {
-//             fontFamily: '"Press Start 2P"',
-//             fontSize: '32px',
-//             align: 'center',
-//             color: '#ffffff'
-//         }).setOrigin(0.5, 0.5);
-//         this.add.text(500, 350, `HIGH SCORE: ${this.registry.get('highScore')}`, {
-//             fontFamily: '"Press Start 2P"',
-//             fontSize: '32px',
-//             align: 'center',
-//             color: '#ffffff'
-//         }).setOrigin(0.5, 0.5);
-//         const replayButton = this.add.text(500, 450, 'PLAY AGAIN?', { fontFamily: '"Press Start 2P"', fontSize: '32px', align: 'center', color: '#ffffff'})
-//             .setInteractive()
-//             .on('pointerdown', () => this.scene.start("Level1"));
-//         replayButton.setOrigin(0.5, 0.5);
-        
+        });       
     }
 
     update() {
